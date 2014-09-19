@@ -1,9 +1,8 @@
 # Parrot DNA
 
 ## TODO
-- Get more consistent DNA sequences (that means goodbye, Kakapo)
-- Get more DNA sequences, period
-- Improve colors
-- Style
+- Get more DNA sequences
 - Make responsive
-- Animate circle rendering
+- Prettier styling
+- Try sequential animation rather than all-at-once
+- Add a play button that fireworks through the different species

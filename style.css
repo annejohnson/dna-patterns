@@ -269,22 +269,26 @@ textarea {
  * birdVis styles
  */
 
+body {
+    background-color: #eee;
+}
+
 #birdVis, #birdVis > svg {
     height: 100% !important;
     display: block;
 }
 
 .button.chooser {
-    font-size: 40px;
-    letter-spacing: 2px;
-    font-weight: bold;
-    margin: 0 30px;
     color: white;
     background-color: #555;
-    border: 30px solid #555;
+    font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    padding: 16px 24px;
+    margin: 0 30px;
+    width: 220px;
     box-sizing: border-box;
     display: inline-block;
-    padding: 16px 24px;
     cursor: pointer;
     -webkit-transition: all .25s linear;
     -moz-transition:    all .25s linear;
@@ -297,20 +301,17 @@ textarea {
 
 .button.chooser.active {
     background-color: #222;
-    border: 30px solid #222;
     color: white;
 }
 
 .button.chooser:hover {
     background-color: #333;
     color: white;
-    border: 30px solid #333;
 }
 
 .button.chooser.active:hover {
     background-color: black;
     color: white;
-    border: 30px solid black;
 }
 
 #choicesContainer {
