@@ -2,7 +2,8 @@ var spacer = 130;
 var radiusMultiplier = 18;
 var radiusAdder = 4;
 var nucleotides = "ACGT";
-var circleDrawTime = 600;
+var circleDrawTime = 3000;
+var circleRemoveTime = circleDrawTime / 4;
 var birdVis;
 
 var maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
@@ -24,11 +25,10 @@ var nucleotideToNum = function(char) {
 // param colors: array of colors to be applied to shapes
 var writeVis = function(data, colors){
 	birdVis.forEach(function(circ) {
-		circ.animate({r: 0}, circleDrawTime, function() {
+		circ.animate({r: 0}, circleRemoveTime, "linear", function() {
 			circ.remove();
 		});
 	});
-
 	var currX = 0;
 	var currY = 0;
 	for (var i = 0; i < data.length; i++) {
@@ -36,7 +36,7 @@ var writeVis = function(data, colors){
 		var newCircle = birdVis.circle(currX, currY, 0);
 		newCircle.attr({fill: colors[data[i]], stroke: colors[data[i]]});
 		currX += radius + spacer;
-		newCircle.animate({r: radius}, circleDrawTime);
+		newCircle.animate({r: radius}, circleDrawTime, "elastic");
 		if (currX > screen.width) {
 			currX = 0;
 			currY += maxRadius + spacer;
@@ -85,7 +85,7 @@ var birds = {
 		colors: ["red", "purple", "silver", "pink"]
 	},
 	pionus: {
-		name: "Maximilian Pionus",
+		name: "Pionus",
 		seq: "ATAACTCCCATTGCAAAACTAATCTCAGCCCTAAGTATCCTGCTAGGAACAACAATAACAATCACAAGTAACCACTGAGCCATAGCTTGGGCAGGACTAGAAATCAACACCCTATCAATCATCCCCATAATCTCAAAATCCCACCACCCACGAGCCGTTGAAGCAGCAACCAAGTACTTCCTAGTACAAGCTGCCGCTTCAACACTAGTACTCTTCTCAAGCACAATCAACGCATGACACACAGGACAATGAGACATCACCCTACTCACCCATCCCCCAGCATGTCTCCTACTAACCACCGCAGTTGCTATTAAGCTGGGCCTAACTCCATTCCACTTTTGATTTCCAGAAGTACTCCAAGGGTCATCCCTCCCCACAGCCCTACTTCTCTCAACAGTAATAAAACTCCCACCAATTACACTCCTACTAATCACATCCCACTCACTAAACCCTGTCCTACTCACTACCATATCCATTATATCCGTCGCCCTTGGCGGCTGAATGGGACTAAACCAAACACAAACCCGAAAAATTATAGCCTTCTCATCCATCTCCCACCTGGGCTGAATAACATCCATTATCACCTACAGCCCAAAACTAACCCTACTAACCTTCTACGCCTACGCCCTAATAACAACCTCCATCTTCCTCACTATAAACACAACCAACACCTTAAAACTATCAACACTAATGACTGCATGAACCAAAACTCCCATACTAAACACAACCCTCATACTAACACTACTATCACTAGCAGGCCTCCCCCCACTAACAGGCTTCCTGCCCAAATGACTCATCATCCAAGAACTCGTCAAGCAAGAAATAACCACAACAGCCACAATCATCTCCATAATATCGCTCCTAGGGTTATTCTTCTACCTACGCCTAGCATACTGCTCCACTATCACACTCCCCCCCAACCCCTCTAGCAAGATAAAACAGTGATCCACTAAAAACCCAACCAACACTCTAGTCTCCACACTCACCTCCCTGTCCATCTCACTCCTCCCACTCTCCCCTATAATCCTCACCACCACTTAA",
 		colors: ["olive", "green", "silver", "purple"]
 	},
