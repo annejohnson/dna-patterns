@@ -2,11 +2,14 @@ var spacer = 130;
 var radiusMultiplier = 18;
 var radiusAdder = 4;
 var nucleotides = "ACGT";
+var circleDrawTime = 600;
+var birdVis;
 
 var maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
 
 // BOOM!
 window.onload = function() {
+	birdVis = Raphael("birdVis");
 	makeSelectTag();
 	document.getElementById("kakapo").click();
 };
@@ -20,16 +23,20 @@ var nucleotideToNum = function(char) {
 // param data: array of raw numbers used for computing radii
 // param colors: array of colors to be applied to shapes
 var writeVis = function(data, colors){
-	document.getElementById("birdVis").innerHTML = "";
-	var birdVis = Raphael("birdVis");
+	birdVis.forEach(function(circ) {
+		circ.animate({r: 0}, circleDrawTime, function() {
+			circ.remove();
+		});
+	});
 
 	var currX = 0;
 	var currY = 0;
 	for (var i = 0; i < data.length; i++) {
 		var radius = (data[i] + radiusAdder) * radiusMultiplier;
-		var newCircle = birdVis.circle(currX, currY, radius);
+		var newCircle = birdVis.circle(currX, currY, 0);
 		newCircle.attr({fill: colors[data[i]], stroke: colors[data[i]]});
 		currX += radius + spacer;
+		newCircle.animate({r: radius}, circleDrawTime);
 		if (currX > screen.width) {
 			currX = 0;
 			currY += maxRadius + spacer;
