@@ -5,6 +5,8 @@
 	var nucleotides = "ACGT";
 	var circleDrawTime = 3000;
 	var circleRemoveTime = circleDrawTime / 4;
+	var redrawTimeout = 200;
+	var currBird = "pionus";
 	var birdVis;
 
 	var maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
@@ -13,7 +15,7 @@
 	window.onload = function() {
 		birdVis = Raphael("birdVis");
 		makeSelectTag();
-		document.getElementById("pionus").click();
+		document.getElementById(currBird).click();
 	};
 
 	// Turns a nucleotide into a number
@@ -24,20 +26,30 @@
 	// Writes visualization to div#birdVis
 	// param data: array of raw numbers used for computing radii
 	// param colors: array of colors to be applied to shapes
-	var writeVis = function(data, colors){
-		birdVis.forEach(function(circ) {
-			circ.animate({r: 0}, circleRemoveTime, "linear", function() {
-				circ.remove();
+	var writeVis = function(data, colors, shouldAnimate){ // TODO refactor this
+		if (shouldAnimate) {
+			birdVis.forEach(function(circ) {
+				circ.animate({r: 0}, circleRemoveTime, "linear", function() {
+					circ.remove();
+				});
 			});
-		});
+		} else {
+			birdVis.clear();
+		}
 		var currX = 0;
 		var currY = 0;
 		for (var i = 0; i < data.length; i++) {
 			var radius = (data[i] + radiusAdder) * radiusMultiplier;
-			var newCircle = birdVis.circle(currX, currY, 0);
+			var newCircle;
+			if (shouldAnimate) {
+				newCircle = birdVis.circle(currX, currY, 0);
+			} else {
+				newCircle = birdVis.circle(currX, currY, radius);
+			}
 			newCircle.attr({fill: colors[data[i]], stroke: colors[data[i]]});
 			currX += radius + spacer;
-			newCircle.animate({r: radius}, circleDrawTime, "elastic");
+			if (shouldAnimate)
+				newCircle.animate({r: radius}, circleDrawTime, "elastic");
 			if (currX > screen.width) {
 				currX = 0;
 				currY += maxRadius + spacer;
@@ -69,7 +81,14 @@
 	// Changes the graph to show the selected bird
 	// Param newBird: the simple string representing the type of bird
 	var changeBird = function(newBird) {
-		writeVis(makeData(birds[newBird].seq), birds[newBird].colors);
+		currBird = newBird;
+		writeVis(makeData(birds[newBird].seq), birds[newBird].colors, true);
+	};
+
+	window.onresize = function() {
+		setTimeout(function() {
+			writeVis(makeData(birds[currBird].seq), birds[currBird].colors, false);
+		}, redrawTimeout);
 	};
 
 	// Takes a DNA char string
