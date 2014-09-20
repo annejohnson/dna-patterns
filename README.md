@@ -1,7 +1,8 @@
-# Parrot DNA
+# DNA Patterns
 
 ## TODO
 - Get more DNA sequences
+- Put geography data and species name
 - Make responsive
 - Prettier styling
 - Try sequential animation rather than all-at-once
