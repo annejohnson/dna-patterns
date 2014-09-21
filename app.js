@@ -74,7 +74,7 @@
 	window.onload = function() {
 		birdVis = Raphael("birdVis");
 		makeSelectTag();
-		document.getElementById(currBird).click();
+		changeBird(currBird);
 	};
 
 	// Makes link tags for the page
