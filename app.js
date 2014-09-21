@@ -11,22 +11,22 @@
 
 	var maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
 
-	// BOOM!
-	window.onload = function() {
-		birdVis = Raphael("birdVis");
-		makeSelectTag();
-		document.getElementById(currBird).click();
-	};
-
 	// Turns a nucleotide into a number
 	var nucleotideToNum = function(char) {
 		return nucleotides.indexOf(char);
 	}
 
+	// Takes a DNA char string
+	// Returns an array of nums
+	var makeData = function(str) {
+		return str.split('').map(function(char) { return nucleotideToNum(char); });
+	}
+
 	// Writes visualization to div#birdVis
 	// param data: array of raw numbers used for computing radii
 	// param colors: array of colors to be applied to shapes
-	var writeVis = function(data, colors, shouldAnimate){ // TODO refactor this
+	// param shouldAnimate: true if user wants animation
+	var writeVis = function(data, colors, shouldAnimate){
 		if (shouldAnimate) {
 			birdVis.forEach(function(circ) {
 				circ.animate({r: 0}, circleRemoveTime, "linear", function() {
@@ -41,11 +41,7 @@
 		for (var i = 0; i < data.length; i++) {
 			var radius = (data[i] + radiusAdder) * radiusMultiplier;
 			var newCircle;
-			if (shouldAnimate) {
-				newCircle = birdVis.circle(currX, currY, 0);
-			} else {
-				newCircle = birdVis.circle(currX, currY, radius);
-			}
+			newCircle = birdVis.circle(currX, currY, (shouldAnimate ? 0 : radius));
 			newCircle.attr({fill: colors[data[i]], stroke: colors[data[i]]});
 			currX += radius + spacer;
 			if (shouldAnimate)
@@ -57,8 +53,30 @@
 		}
 	};
 
-	// Makes a tags for the page
-	// Binds clicks to graph updates
+	// Changes the visualization to show the selected bird
+	// Param newBird: the simple string representing the type of bird
+	var changeBird = function(newBird) {
+		currBird = newBird;
+		writeVis(makeData(birds[newBird].seq), birds[newBird].colors, true);
+	};
+
+	// Redraws the visualization after a brief timeout whenever the
+	// screen is resized
+	window.onresize = function() {
+		setTimeout(function() {
+			writeVis(makeData(birds[currBird].seq), birds[currBird].colors, false);
+		}, redrawTimeout);
+	};
+
+	// BOOM!
+	window.onload = function() {
+		birdVis = Raphael("birdVis");
+		makeSelectTag();
+		document.getElementById(currBird).click();
+	};
+
+	// Makes link tags for the page
+	// Binds clicks to visualization updates and maintains active nav
 	var makeSelectTag = function() {
 		for (var bird in birds) {
 			var btn = document.createElement("a");
@@ -68,34 +86,14 @@
 			document.getElementById("choicesContainer").appendChild(btn);
 			btn.onclick = function(e) {
 				e.preventDefault();
-				var allButtons = document.getElementsByClassName("chooser");
-				for (var i = 0; i < allButtons.length; i++) {
+				var allButtons = document.getElementsByClassName("active");
+				for (var i = 0; i < allButtons.length; i++)
 					allButtons[i].className = "button chooser";
-				}
 				this.className = "button chooser active";
 				changeBird(this.id);
 			};
 		}
 	};
-
-	// Changes the graph to show the selected bird
-	// Param newBird: the simple string representing the type of bird
-	var changeBird = function(newBird) {
-		currBird = newBird;
-		writeVis(makeData(birds[newBird].seq), birds[newBird].colors, true);
-	};
-
-	window.onresize = function() {
-		setTimeout(function() {
-			writeVis(makeData(birds[currBird].seq), birds[currBird].colors, false);
-		}, redrawTimeout);
-	};
-
-	// Takes a DNA char string
-	// Returns an array of nums
-	var makeData = function(str) {
-		return str.split('').map(function(char) { return nucleotideToNum(char); });
-	}
 
 	// Bird data!
 	var birds = {
@@ -104,10 +102,10 @@
 			seq: "ATAACTCCCATTGCAAAACTAATCTCAGCCCTAAGTATCCTGCTAGGAACAACAATAACAATCACAAGTAACCACTGAGCCATAGCTTGGGCAGGACTAGAAATCAACACCCTATCAATCATCCCCATAATCTCAAAATCCCACCACCCACGAGCCGTTGAAGCAGCAACCAAGTACTTCCTAGTACAAGCTGCCGCTTCAACACTAGTACTCTTCTCAAGCACAATCAACGCATGACACACAGGACAATGAGACATCACCCTACTCACCCATCCCCCAGCATGTCTCCTACTAACCACCGCAGTTGCTATTAAGCTGGGCCTAACTCCATTCCACTTTTGATTTCCAGAAGTACTCCAAGGGTCATCCCTCCCCACAGCCCTACTTCTCTCAACAGTAATAAAACTCCCACCAATTACACTCCTACTAATCACATCCCACTCACTAAACCCTGTCCTACTCACTACCATATCCATTATATCCGTCGCCCTTGGCGGCTGAATGGGACTAAACCAAACACAAACCCGAAAAATTATAGCCTTCTCATCCATCTCCCACCTGGGCTGAATAACATCCATTATCACCTACAGCCCAAAACTAACCCTACTAACCTTCTACGCCTACGCCCTAATAACAACCTCCATCTTCCTCACTATAAACACAACCAACACCTTAAAACTATCAACACTAATGACTGCATGAACCAAAACTCCCATACTAAACACAACCCTCATACTAACACTACTATCACTAGCAGGCCTCCCCCCACTAACAGGCTTCCTGCCCAAATGACTCATCATCCAAGAACTCGTCAAGCAAGAAATAACCACAACAGCCACAATCATCTCCATAATATCGCTCCTAGGGTTATTCTTCTACCTACGCCTAGCATACTGCTCCACTATCACACTCCCCCCCAACCCCTCTAGCAAGATAAAACAGTGATCCACTAAAAACCCAACCAACACTCTAGTCTCCACACTCACCTCCCTGTCCATCTCACTCCTCCCACTCTCCCCTATAATCCTCACCACCACTTAA",
 			colors: ["olive", "green", "silver", "purple"]
 		},
-		barraband: {
-			name: "Barraband / Superb",
+		regent: {
+			name: "Regent Parakeet",
 			seq: "ATGAGTCCCCTTACAAAACTTATTCTAACTACAAGTCTGCTCACAGGGACAACAATCACAATCACAAGCAACCACTGACTAATAGCCTGAACCGGATTAGAAATCAACACCTTAGCCATCATCCCCCTAATCTCAAAATCCCACCACCCACGAGCCATCGAAGCAGCAACCAAATACTTCCTAGTACAAGCAGCAGCCTCCACACTAATACTCTTCTCAAGCACAATAAACGCATGATTTACTGGACAGTGAGACATCACCCAGCTCACCCACCCTCCATCATCCGCTCTACTAACCGCTGCAATCGCTATTAAACTAGGCCTAGCCCCATTCCACTTCTGATTTCCAGAAGCACTCCAAGGGTCATCCCTTACCACGGCCCTCCTTCTCTCAACAGTAATAAAACTCCCACCAACTACCATTCTCCTACTCACATCACACTCACTAAACCCAACACTACTCACCACCATATCCATCATATCCATCGCCCTAGGTGGATGAATAGGACTTAACCAAACACAAACCCGCAAAATCCTAGCCTTCTCCTCCATTTCACACCTAGGCTGAATAACCACCATCATCATCTACAACCCAAAACTAACCCTACTAACCTTCCTCACCTACATCCTAATAACAACCTCTATCTTTCTCACCATAAACACAACCAACACCCTAAAGCTACCAACGCTAATAACCTCCTGAACCAAAACCCCCACCCTAAGCACAACCCTCATACTAACCCTCCTCTCACTAGCGGGTCTCCCCCCACTAACAGGATTTTTACCCAAATGACTCATCATCCAAGAGCTCACTAAACAAGAAATAACCACAACAGCTACAATCATCTCTATATTCTCACTCCTAGGACTATTCTTCTACCTCCGCTTGGCATACTGTTCAACAATCACCCTACCTCCAAACCCCTCAAACAAAATAAAACAATGATCCCCTAAAAAACCAACAAACATCCTAATCTCTACATCTACCTCACTATCCACCTCACTCCTACCACTCTCCCCTATAATTCTCACCACCATTTAA",
-			colors: ["#ff3f00", "#fff200", "#ffbe82", "#41d344"] // red yellow peach green
+			colors: ["#ff3f00", "#446389", "#41d344", "#5a845a"] // red blue lightgreen olivegreen
 		},
 		yellowCrested: {
 			name: "Yellow-Crested Cockatoo",
@@ -117,7 +115,7 @@
 		palm: {
 			name: "Black Palm Cockatoo",
 			seq: "GTTGAGCCCCCTCCCCTACTAATGAGCCCCCTCACAAAATTCATCCTAGCACTAAGCCTAACCTCAGGGACAATAATCACAATCACAAGCAACCACTGAGTAATAGCCTGAGCCGGACTAGAAATCAATACCCTAACCATTCTCCCCCTAATCTCAAAATCCCACCACCCCCGAGCCATCGAAGCTACAATCAAATACTTCCTAACACAAGCAACTGCCTCCATACTAATCCTCTTCTCAAGCATAACCAACGCATGGTCCTCCGGACAATGAGACATTACCCAACTCACCAACCCCCTCTCATGCCTTCTACTCACCACCGCAGTTGCTATCAAACTAGGACTAACTCCATTCCACTTCTGATTCCCAGAAGTACTACAAGGCTCATCCCTCTCCACAGCCCTGCTACTCTCGACAGCAATAAAACTCCCACCAACCACCATCCTACTTCTCACATCACACTCACTAAACCCCACATTACTCTCCACCATGGCTATCACATCCATCGCCCTAGGCGGCTGAATAGGACTTAACCAAACACAAACCCGAAAAATCCTAGCTTTTTCATCTATTTCACACCTAGGCTGAATAACCATCATCATCACCTACAACCCAAAACTAACCCTACTAACCTTCTACCTCTATACCCTAATAACAACGTCCATCTTCCTCACTATAAACTCAGCCAACACCCTAAAACTATCAACGCTAATAACCTCATGAACCAAAACCCCTGTACTAAATTCAACCCTCATACTAACCCTTCTATCACTAGCAGGCCTTCCCCCACTAACAGGCTTCCTCCCCAAATGACTCATCATTCAAGAACTCACCAAGCAAGAAATAACCGTAACAGCTACTATCATCTCCATACTCTCACTCCTAGGGCTCTTCTTCTATCTACGCCTAACGTACTGTTCAACAATCACACTCCCCCCCAACCCTTCAAACAAAATAAAACAATGATCCGCTAAAAAACCAATCAACATCTTAATCCCCCCATTCACCCTCCTATCCCTATCACTCCTACCACTCTCCCCCATAATCCTTACAACCACTTAAGAAACTTAGGATAATACCAAACCAAAG",
-			colors: ["yellow", "red", "gray", "black"]
+			colors: ["#ff3f00", "#666", "#444", "black"] // red gray gray black
 		}
 	};
 })();

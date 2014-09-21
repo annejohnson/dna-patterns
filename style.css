@@ -86,26 +86,6 @@ textarea {
 }
 
 /* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ==========================================================================
    Helper classes
    ========================================================================== */
 
@@ -270,26 +250,28 @@ textarea {
  */
 
 body {
-    background-color: #eee;
+    background-color: #ddd;
     font-family: 'Bitter', Arial, sans-serif;
 }
 
 #birdVis, #birdVis > svg {
     height: 100% !important;
-    width: 100%;
+    width: 100% !important;
     display: block;
+    min-height: 280px;
 }
 
 .button.chooser {
     color: black;
-    background-color: white;
-    font-size: 18px;
+    background-color: #eee;
+    font-size: 20px;
     letter-spacing: 1px;
-    font-weight: bold;
+    font-weight: 400;
     padding: 16px 24px;
-    margin: 0 30px;
-    width: 220px;
+    margin: 20px 5%;
+    width: 40%;
     display: inline-block;
+    float: left;
     cursor: pointer;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -301,30 +283,72 @@ body {
     -webkit-border-radius: 15px;
     -webkit-border-radius: 15px;
     border-radius: 15px;
-    -webkit-box-shadow: 2px 2px 4px #444;
-    -moz-box-shadow: 2px 2px 4px #444;
-    box-shadow: 2px 2px 4px #444;
+    -webkit-box-shadow: 4px 4px 0px #222;
+    -moz-box-shadow: 4px 4px 0px #222;
+    box-shadow: 4px 4px 0px #222;
+}
+
+.button.chooser:nth-child(odd) {
+    clear: left;
+    float: left;
 }
 
 .button.chooser.active {
     background-color: white;
     color: black;
+    font-weight: 700;
 }
 
 .button.chooser:hover {
-    background-color: #eee;
-    color: black;
-}
-
-.button.chooser.active:hover {
-    background-color: #eee;
+    background-color: white;
     color: black;
 }
 
 #choicesContainer {
-    width: 100%;
     text-align: center;
+    width: 550px;
     position: absolute;
     top: 50%;
-    margin-top: -41px;
+    left: 50%;
+    margin: -122px auto 0 -275px;
+    float: none;
+    display: block;
+}
+
+@media screen and (max-height: 280px) {
+    #choicesContainer {
+        top: 0;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    #choicesContainer {
+        width: 100%;
+        margin: 40px auto 40px auto;
+        top: 0;
+        left: 0;
+        position: relative;
+    }
+
+    #birdVis, #birdVis svg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        height: 480px !important;
+    }
+
+    .button.chooser, .button.chooser:nth-child(odd) {
+        display: block;
+        margin: 30px auto;
+        float: none;
+        clear: both;
+    }
+
+    .button.chooser {
+        width: 60%;
+        max-width: 220px;
+        font-size: 18px;
+        padding: 18px 12px;
+    }
 }
