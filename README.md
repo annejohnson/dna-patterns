@@ -5,8 +5,6 @@ This uses homologous DNA sequences across a few parrot species to generate patte
 ## TODO
 - Get more DNA sequences
 - Put geography data and species name
-- More efficient rendering
-  - Only render the number needed to fill screen
 - Responsive rendering
   - Smaller circles on smaller screen sizes
 - Try sequential animation rather than all-at-once

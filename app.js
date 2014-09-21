@@ -1,15 +1,15 @@
 (function () {
-	var spacer = 130;
-	var radiusMultiplier = 18;
-	var radiusAdder = 4;
-	var nucleotides = "ACGT";
-	var circleDrawTime = 3000;
-	var circleRemoveTime = circleDrawTime / 4;
-	var redrawTimeout = 200;
-	var currBird = "pionus";
-	var birdVis;
+	var spacer = 130,
+		radiusMultiplier = 18,
+		radiusAdder = 4,
+		nucleotides = "ACGT",
+		circleDrawTime = 3000,
+		circleRemoveTime = circleDrawTime / 4,
+		redrawTimeout = 200,
+		currBird = "pionus",
+		maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
 
-	var maxRadius = ((nucleotides.length - 1) + radiusAdder) * radiusMultiplier;
+	var birdVis;
 
 	// Turns a nucleotide into a number
 	var nucleotideToNum = function(char) {
@@ -36,9 +36,10 @@
 		} else {
 			birdVis.clear();
 		}
-		var currX = 0;
-		var currY = 0;
-		for (var i = 0; i < data.length; i++) {
+		var currX = 0,
+			currY = 0,
+			i = 0;
+		while (currY <= screen.height) {
 			var radius = (data[i] + radiusAdder) * radiusMultiplier;
 			var newCircle;
 			newCircle = birdVis.circle(currX, currY, (shouldAnimate ? 0 : radius));
@@ -50,6 +51,7 @@
 				currX = 0;
 				currY += maxRadius + spacer;
 			}
+			i++;
 		}
 	};
 

@@ -335,7 +335,7 @@ body {
         position: absolute;
         top: 0;
         bottom: 0;
-        height: 480px !important;
+        min-height: 480px !important;
     }
 
     .button.chooser, .button.chooser:nth-child(odd) {
