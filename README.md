@@ -9,3 +9,6 @@ This uses homologous DNA sequences across a few parrot species to generate patte
   - Smaller circles on smaller screen sizes
 - Try sequential animation rather than all-at-once
 - Add a play button that fireworks through the different species
+
+:)
+
