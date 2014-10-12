@@ -54,7 +54,7 @@
 		var currX = 0,
 			currY = 0,
 			i = 0;
-		while (currY <= screen.height) {
+		while (currY <= screen.height + drawVars.maxRadius) {
 			var radius = (data[i] + drawVars.radiusAdder) * drawVars.radiusMultiplier;
 			var newCircle;
 			newCircle = birdVis.circle(currX, currY, (shouldAnimate ? 0 : radius));
