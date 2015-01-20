@@ -87,6 +87,7 @@
   // Redraws the visualization after a brief timeout whenever the
   // screen is resized
   window.onresize = function() {
+    birdVis.setSize(screen.width, screen.height);
     setTimeout(function() {
       writeVis(makeData(birds[currBird].seq), birds[currBird].colors, false, drawVars[getScreenSize()]);
     }, redrawTimeout);
@@ -95,6 +96,7 @@
   // BOOM!
   window.onload = function() {
     birdVis = Raphael("birdVis");
+    birdVis.setSize(screen.width, screen.height);
     makeSelectTag();
     changeBird(currBird);
   };

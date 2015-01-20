@@ -252,13 +252,14 @@ textarea {
 body {
     background-color: #ddd;
     font-family: 'Bitter', Arial, sans-serif;
+    /* min-height: 280px; */
+    overflow: hidden;
 }
 
 #birdVis, #birdVis > svg {
     height: 100% !important;
     width: 100% !important;
     display: block;
-    min-height: 280px;
 }
 
 .button.chooser {
@@ -335,6 +336,9 @@ body {
         position: absolute;
         top: 0;
         bottom: 0;
+    }
+
+    body {
         min-height: 480px !important;
     }
 
