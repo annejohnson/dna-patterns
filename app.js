@@ -1,128 +1,160 @@
 (function () {
-  var drawVars = {
-      small: {
-        radiusMultiplier: 9,
-        radiusAdder: 4
-      },
-      large: {
-        radiusMultiplier: 18,
-        radiusAdder: 4
-      }
-    },
-    breakpoint = 600,
-    circleDrawTime = 3000,
-    circleRemoveTime = circleDrawTime / 4,
-    redrawTimeout = 200,
-    margin = 4;
-    nucleotides = "ACGT",
-    currBird = "pionus";
+  var screenWidthBreakpoint = 600,
+      circleDrawTime = 3000,
+      circleRemoveTime = circleDrawTime / 4,
+      redrawTimeout = 200,
+      nucleotides = "ACGT",
+      currBirdName = "pionus";
 
-    drawVars.small.maxRadius = ((nucleotides.length - 1) + drawVars.small.radiusAdder) * drawVars.small.radiusMultiplier;
-    drawVars.large.maxRadius = ((nucleotides.length - 1) + drawVars.large.radiusAdder) * drawVars.large.radiusMultiplier;
+  var birdVisRaphaelObject;
 
-    drawVars.small.spacer = drawVars.small.maxRadius + margin;
-    drawVars.large.spacer = drawVars.large.maxRadius + margin;
+  window.onload = function() {
+    prepareContainer();
+    initializeButtons();
+    highlightButton(document.getElementById(currBirdName));
+    displayCurrentBirdVis({ animate: true });
+  };
 
-  var birdVis;
+  window.onresize = function() {
+    prepareContainer();
+    setTimeout(function() {
+      displayCurrentBirdVis({ animate: false });
+    }, redrawTimeout);
+  };
 
-  // Turns a nucleotide into a number
-  var nucleotideToNum = function(char) {
+  var prepareContainer = function() {
+    if (!birdVisRaphaelObject) {
+      birdVisRaphaelObject = Raphael("birdVis");
+    }
+    birdVisRaphaelObject.setSize(screen.width, screen.height);
+  };
+
+  var initializeButtons = function() {
+    for (var birdName in birdData) {
+      initializeButton(birdName);
+    }
+  };
+
+  var initializeButton = function(birdName) {
+    var btn = constructButtonNode(birdName);
+    btn.onclick = function(e) {
+      e.preventDefault();
+      unhighlightAllButtons();
+      highlightButton(this);
+      currBirdName = this.id;
+      displayCurrentBirdVis({ animate: true });
+    };
+  };
+
+  var constructButtonNode = function(bird) {
+    var btn = document.createElement("a");
+    btn.textContent = birdData[bird].name;
+    btn.id = bird;
+    btn.className = "button chooser";
+    document.getElementById("choicesContainer").appendChild(btn);
+    return btn;
+  };
+
+  var unhighlightAllButtons = function() {
+    var allButtons = document.getElementsByClassName("active");
+    for (var i = 0; i < allButtons.length; i++)
+      allButtons[i].className = "button chooser";
+  };
+
+  var highlightButton = function(btn) {
+    btn.className = "button chooser active";
+  };
+
+  var nucleotideToNumber = function(char) {
     return nucleotides.indexOf(char);
   }
 
-  // Takes a DNA char string
-  // Returns an array of nums
-  var makeData = function(str) {
-    return str.split('').map(function(char) { return nucleotideToNum(char); });
+  var nucleotidesToNumbers = function(str) {
+    return str.split('').map(nucleotideToNumber);
   }
 
-  // Writes visualization to div#birdVis
-  // param data: array of raw numbers used for computing radii
-  // param colors: array of colors to be applied to shapes
-  // param shouldAnimate: true if user wants animation
-  // param drawVars: a JS object containing radiusAdder, radiusMultiplier, maxRadius, and spacer properties
-  var writeVis = function(data, colors, shouldAnimate, drawVars){
-    if (shouldAnimate) {
-      birdVis.forEach(function(circ) {
-        circ.animate({r: 0}, circleRemoveTime, "linear", function() {
-          circ.remove();
-        });
-      });
-    } else {
-      birdVis.clear();
-    }
+  var largeOrSmallScreen = function() {
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    return width > screenWidthBreakpoint ? "large" : "small";
+  };
+
+  var displayCurrentBirdVis = function(options) {
+    writeVis(
+      nucleotidesToNumbers(birdData[currBirdName].seq),
+      birdData[currBirdName].colors,
+      options['animate']
+    );
+  };
+
+  var writeVis = function(arrayOfInts, colorStrings, shouldAnimate) {
+    removeAllCircles(shouldAnimate)
     var currX = 0,
       currY = 0,
-      i = 0;
-    while (currY <= screen.height + 2 * drawVars.maxRadius) {
-      var radius = (data[i] + drawVars.radiusAdder) * drawVars.radiusMultiplier;
+      i = 0,
+      drawOptions = defaultDrawOptions(),
+      maxDiameter = 2 * drawOptions.maxRadius;
+    while (currY <= screen.height + maxDiameter) {
+      var radius = (arrayOfInts[i] + drawOptions.radiusAdder) * drawOptions.radiusMultiplier;
+      var initialRadius = shouldAnimate ? 0 : radius;
       var newCircle;
-      newCircle = birdVis.circle(currX, currY, (shouldAnimate ? 0 : radius));
-      newCircle.attr({fill: colors[data[i]], stroke: colors[data[i]]});
-      currX += radius + drawVars.spacer;
-      if (shouldAnimate)
-        newCircle.animate({r: radius}, circleDrawTime, "elastic");
+
+      newCircle = birdVisRaphaelObject.circle(
+        currX,
+        currY,
+        initialRadius
+      );
+      newCircle.attr({
+        fill: colorStrings[arrayOfInts[i]],
+        stroke: colorStrings[arrayOfInts[i]]
+      });
+
+      if (shouldAnimate) {
+        newCircle.animate({ r: radius }, circleDrawTime, "elastic");
+      }
+
+      currX += radius + drawOptions.spacer;
       if (currX > screen.width) {
         currX = 0;
-        currY += drawVars.maxRadius + drawVars.spacer;
+        currY += drawOptions.maxRadius + drawOptions.spacer;
       }
       i++;
     }
   };
 
-  // Returns "large" or "small" based on the window size if available - otherwise based
-  // on the screen size
-  var getScreenSize = function() {
-    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-    return width > breakpoint ? "large" : "small";
-  };
-
-  // Changes the visualization to show the selected bird
-  // Param newBird: the simple string representing the type of bird
-  var changeBird = function(newBird) {
-    currBird = newBird;
-    writeVis(makeData(birds[newBird].seq), birds[newBird].colors, true, drawVars[getScreenSize()]);
-  };
-
-  // Redraws the visualization after a brief timeout whenever the
-  // screen is resized
-  window.onresize = function() {
-    birdVis.setSize(screen.width, screen.height);
-    setTimeout(function() {
-      writeVis(makeData(birds[currBird].seq), birds[currBird].colors, false, drawVars[getScreenSize()]);
-    }, redrawTimeout);
-  };
-
-  // BOOM!
-  window.onload = function() {
-    birdVis = Raphael("birdVis");
-    birdVis.setSize(screen.width, screen.height);
-    makeSelectTag();
-    changeBird(currBird);
-  };
-
-  // Makes link tags for the page
-  // Binds clicks to visualization updates and maintains active nav
-  var makeSelectTag = function() {
-    for (var bird in birds) {
-      var btn = document.createElement("a");
-      btn.textContent = birds[bird].name;
-      btn.id = bird;
-      btn.className = "button chooser";
-      document.getElementById("choicesContainer").appendChild(btn);
-      btn.onclick = function(e) {
-        e.preventDefault();
-        var allButtons = document.getElementsByClassName("active");
-        for (var i = 0; i < allButtons.length; i++)
-          allButtons[i].className = "button chooser";
-        this.className = "button chooser active";
-        changeBird(this.id);
-      };
+  var removeAllCircles = function(shouldAnimate) {
+    if (shouldAnimate) {
+      birdVisRaphaelObject.forEach(function(circ) {
+        circ.animate({ r: 0 }, circleRemoveTime, "linear", function() {
+          circ.remove();
+        });
+      });
+    } else {
+      birdVisRaphaelObject.clear();
     }
   };
 
-  // Bird data!
-  var birds = {
+  var defaultDrawOptions = function() {
+    var drawOptions = {
+          small: {
+            radiusMultiplier: 9,
+            radiusAdder: 4
+          },
+          large: {
+            radiusMultiplier: 18,
+            radiusAdder: 4
+          }
+        };
+    var margin = 4;
+
+    ["small", "large"].map(function(size) {
+      drawOptions[size].maxRadius = ((nucleotides.length - 1) + drawOptions[size].radiusAdder) * drawOptions[size].radiusMultiplier;
+      drawOptions[size].spacer = drawOptions[size].maxRadius + margin;
+    });
+
+    return drawOptions[largeOrSmallScreen()];
+  };
+
+  var birdData = {
     pionus: {
       name: "Maximilian Pionus",
       seq: "ATAACTCCCATTGCAAAACTAATCTCAGCCCTAAGTATCCTGCTAGGAACAACAATAACAATCACAAGTAACCACTGAGCCATAGCTTGGGCAGGACTAGAAATCAACACCCTATCAATCATCCCCATAATCTCAAAATCCCACCACCCACGAGCCGTTGAAGCAGCAACCAAGTACTTCCTAGTACAAGCTGCCGCTTCAACACTAGTACTCTTCTCAAGCACAATCAACGCATGACACACAGGACAATGAGACATCACCCTACTCACCCATCCCCCAGCATGTCTCCTACTAACCACCGCAGTTGCTATTAAGCTGGGCCTAACTCCATTCCACTTTTGATTTCCAGAAGTACTCCAAGGGTCATCCCTCCCCACAGCCCTACTTCTCTCAACAGTAATAAAACTCCCACCAATTACACTCCTACTAATCACATCCCACTCACTAAACCCTGTCCTACTCACTACCATATCCATTATATCCGTCGCCCTTGGCGGCTGAATGGGACTAAACCAAACACAAACCCGAAAAATTATAGCCTTCTCATCCATCTCCCACCTGGGCTGAATAACATCCATTATCACCTACAGCCCAAAACTAACCCTACTAACCTTCTACGCCTACGCCCTAATAACAACCTCCATCTTCCTCACTATAAACACAACCAACACCTTAAAACTATCAACACTAATGACTGCATGAACCAAAACTCCCATACTAAACACAACCCTCATACTAACACTACTATCACTAGCAGGCCTCCCCCCACTAACAGGCTTCCTGCCCAAATGACTCATCATCCAAGAACTCGTCAAGCAAGAAATAACCACAACAGCCACAATCATCTCCATAATATCGCTCCTAGGGTTATTCTTCTACCTACGCCTAGCATACTGCTCCACTATCACACTCCCCCCCAACCCCTCTAGCAAGATAAAACAGTGATCCACTAAAAACCCAACCAACACTCTAGTCTCCACACTCACCTCCCTGTCCATCTCACTCCTCCCACTCTCCCCTATAATCCTCACCACCACTTAA",
