@@ -10,9 +10,12 @@ var DNASequenceCollectionView = function(model, elements) {
 
   var displaySequence = function(sequence) {
     if (dnaVisual) {
-      dnaVisual.clear();
+      dnaVisual.clear(function() {
+        dnaVisual.render(sequence);
+      });
+    } else {
+      dnaVisual = new DNAVisual(patternContainerId).render(sequence);
     }
-    dnaVisual = new DNAVisual(patternContainerId, sequence).render();
   };
 
   var initializeButtons = function() {

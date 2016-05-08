@@ -1,19 +1,21 @@
-var DNAVisual = function(containerId, dnaSequence) {
+var DNAVisual = function(containerId) {
   var container = new RaphaelWrapper(containerId);
   var drawConfig = new CircleDrawConfig();
 
-  this.render = function() {
+  this.render = function(dnaSequence) {
     container.prepare();
-    createVisual();
+    createVisual(dnaSequence);
     return this;
   };
 
-  this.clear = function() {
-    container.clear(drawConfig.circleRemoveTime());
+  this.clear = function(callback) {
+    var animationTime = drawConfig.circleRemoveTime();
+    container.clear(animationTime);
+    callback && callback();
     return this;
   };
 
-  var createVisual = function() {
+  var createVisual = function(dnaSequence) {
     var point = new Point({ x: 0, y: 0 }),
         circleIdx = 0;
 

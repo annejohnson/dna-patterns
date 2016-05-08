@@ -23,9 +23,7 @@ var RaphaelWrapper = function(containerId) {
   this.clear = function(animationTime) {
     animationTime = animationTime || 0;
 
-    // TODO Animation currently does not take effect when the
-    // call to clear is followed by a call to render.
-    /*raphaelObject.forEach(function(circ) {
+    raphaelObject.forEach(function(circ) {
       circ.animate(
         { r: 0 },
         animationTime,
@@ -34,7 +32,6 @@ var RaphaelWrapper = function(containerId) {
           circ.remove();
         }
       );
-    });*/
-    raphaelObject.clear();
+    });
   };
 };
