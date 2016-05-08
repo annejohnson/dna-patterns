@@ -10,8 +10,7 @@ var DNAVisual = function(containerId) {
 
   this.clear = function(callback) {
     var animationTime = drawConfig.circleRemoveTime();
-    container.clear(animationTime);
-    callback && callback();
+    container.clear(animationTime, callback);
     return this;
   };
 

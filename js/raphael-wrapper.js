@@ -1,10 +1,12 @@
 var RaphaelWrapper = function(containerId) {
-  var raphaelObject;
+  var raphaelObject,
+      raphaelset;
 
   this.prepare = function() {
     if (!raphaelObject) {
       raphaelObject = Raphael(containerId);
       raphaelObject.setSize(screen.width, screen.height);
+      raphaelSet = raphaelObject.set();
     }
   };
 
@@ -16,22 +18,22 @@ var RaphaelWrapper = function(containerId) {
                           stroke: colorString
                         });
 
-    circle.animate({ r: radius }, (animationTime || 0), "elastic");
+    circle.animate({ r: radius }, (animationTime || 0), "backOut");
+    raphaelSet.push(circle);
     return circle;
   };
 
-  this.clear = function(animationTime) {
+  this.clear = function(animationTime, callback) {
     animationTime = animationTime || 0;
 
-    raphaelObject.forEach(function(circ) {
-      circ.animate(
-        { r: 0 },
-        animationTime,
-        "linear",
-        function() {
-          circ.remove();
-        }
-      );
-    });
+    raphaelSet.animate(
+      { r: 0 },
+      animationTime,
+      "linear",
+      function() {
+        raphaelSet.remove();
+        callback && callback();
+      }
+    );
   };
 };
