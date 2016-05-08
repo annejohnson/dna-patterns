@@ -1,7 +1,6 @@
-var DnaVisual = function(containerId, dnaString) {
-  var container = new DnaVisualContainer(containerId);
+var DNAVisual = function(containerId, dnaSequence) {
+  var container = new DNAVisualContainer(containerId);
   var drawOptions = new CircleDrawConfig();
-  var dnaData = new DnaData(dnaString);
 
   this.render = function() {
     container.prepare();
@@ -19,7 +18,7 @@ var DnaVisual = function(containerId, dnaString) {
         circleIdx = 0;
 
     while (!screenHasFilled(point)) {
-      var datum = dnaData.getDrawDatum(circleIdx);
+      var datum = dnaSequence.getDrawDatum(circleIdx);
       var radius = getRadius(datum.value);
       var colorString = datum.color;
 

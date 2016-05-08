@@ -16,8 +16,9 @@
   <script src="external/raphael.js"></script>
 
   <script src="js/point.js"></script>
+  <script src="js/bird-data.js"></script>
   <script src="js/circle-draw-config.js"></script>
-  <script src="js/dna-data.js"></script>
+  <script src="js/dna-sequence.js"></script>
   <script src="js/dna-visual-container.js"></script>
   <script src="js/dna-visual.js"></script>
 
@@ -36,7 +37,8 @@
   <div id="choicesContainer"></div>
 
   <script>
-    var vis = new DnaVisual("birdVis", "ATCGGGGTCATCGATCGTGACDDDA").render();
+    var seq = new DNASequence(birdData.pionus);
+    var vis = new DNAVisual("birdVis", seq).render();
   </script>
 </body>
 <html>

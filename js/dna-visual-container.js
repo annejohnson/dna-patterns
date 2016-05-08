@@ -1,4 +1,4 @@
-var DnaVisualContainer = function(containerId) {
+var DNAVisualContainer = function(containerId) {
   var raphaelObject;
 
   this.prepare = function() {
