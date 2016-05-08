@@ -39,10 +39,10 @@
   <div id="choicesContainer"></div>
 
   <script>
-    var sequences = []
-    for (var birdKey in birdData) {
-      sequences.push(new DNASequence(birdData[birdKey]));
-    }
+    var birdDatumToSequence = function(birdDatum) {
+      return new DNASequence(birdDatum);
+    };
+    var sequences = birdData.map(birdDatumToSequence);
     var preselectSequence = sequences[0];
 
     var vis = new DNAVisual("birdVis", preselectSequence).render();
