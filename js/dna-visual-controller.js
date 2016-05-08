@@ -1,4 +1,4 @@
-var DNAVisualInterface = function(options) {
+var DNAVisualController = function(options) {
   var visualContainerId = options.visualContainerId,
       buttonContainerId = options.buttonContainerId,
       sequences = options.sequences,

@@ -22,7 +22,7 @@
   <script src="js/dna-sequence.js"></script>
   <script src="js/dna-visual-container.js"></script>
   <script src="js/dna-visual.js"></script>
-  <script src="js/dna-visual-interface.js"></script>
+  <script src="js/dna-visual-controller.js"></script>
   <script src="js/button-maker.js"></script>
 
   <script>
@@ -44,7 +44,7 @@
       return new DNASequence(birdDatum);
     });
 
-    new DNAVisualInterface({
+    new DNAVisualController({
       visualContainerId: "birdVis",
       buttonContainerId: "choicesContainer",
       sequences: sequences
