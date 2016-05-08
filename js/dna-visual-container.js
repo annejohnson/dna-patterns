@@ -2,8 +2,10 @@ var DNAVisualContainer = function(containerId) {
   var raphaelObject;
 
   this.prepare = function() {
-    raphaelObject = Raphael(containerId);
-    raphaelObject.setSize(screen.width, screen.height);
+    if (!raphaelObject) {
+      raphaelObject = Raphael(containerId);
+      raphaelObject.setSize(screen.width, screen.height);
+    }
   };
 
   this.drawCircle = function(point, radius, colorString, animationTime) {
