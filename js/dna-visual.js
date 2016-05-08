@@ -19,7 +19,7 @@ var DNAVisual = function(containerId, dnaSequence) {
 
     while (!screenHasFilled(point)) {
       var datum = dnaSequence.getDrawDatum(circleIdx);
-      var radius = getRadius(datum.value);
+      var radius = drawOptions.getRadius(datum.value);
       var colorString = datum.color;
 
       container.drawCircle(
@@ -39,19 +39,16 @@ var DNAVisual = function(containerId, dnaSequence) {
     return point.y > (screen.height + drawOptions.maxDiameter());
   };
 
-  var getRadius = function(dataInt) {
-    return (dataInt + drawOptions.radiusAdder()) *
-             drawOptions.radiusMultiplier();
-  };
-
   var updatePoint = function(point, radius) {
-    var margin = drawOptions.marginBetweenCircles();
+    var distanceToNextCircleCenter = drawOptions.marginBetweenCircles();
 
     if (rowHasFilled(point)) {
+      distanceToNextCircleCenter += drawOptions.maxDiameter();
       point.x = 0;
-      point.y = point.y + drawOptions.maxRadius() + margin;
+      point.y = point.y + distanceToNextCircleCenter;
     } else {
-      point.x = point.x + radius + margin;
+      distanceToNextCircleCenter += radius + drawOptions.maxRadius();
+      point.x = point.x + distanceToNextCircleCenter;
     }
   };
 

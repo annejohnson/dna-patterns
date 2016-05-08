@@ -6,7 +6,6 @@ Each DNA sequence is from the species' NADH dehydrogenase subunit 2 gene (mitoch
 
 ## TODO
 - Refactor to be more MVC-structured
-- Create mobile-optimized version
 - Get more species
 - Put geography data and species name
 - Try sequential animation rather than all-at-once
