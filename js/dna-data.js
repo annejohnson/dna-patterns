@@ -1,13 +1,9 @@
 var DnaData = function(dnaString) {
-  var nucleotides = "ACGT",
-      drawData;
-
-  var initializeDrawData = function() {
-    drawData = dnaString.split('').map(getNucleotideDrawDatum);
-  };
+  var nucleotides = "ACGT";
 
   this.getDrawDatum = function(idx) {
-    return drawData[idx] || getDefaultDrawDatum();
+    var nucleotide = dnaString[idx] || nucleotides.split('')[0];
+    return getNucleotideDrawDatum(nucleotide);
   };
 
   var getNucleotideDrawDatum = function(nucleotide) {
@@ -17,10 +13,6 @@ var DnaData = function(dnaString) {
     };
   };
 
-  var getDefaultDrawDatum = function() {
-    return getNucleotideDrawDatum(nucleotides.split('')[0]);
-  };
-
   var nucleotideToNumber = function(char) {
     return nucleotides.indexOf(char);
   }
@@ -28,6 +20,4 @@ var DnaData = function(dnaString) {
   var nucleotideToColor = function(nucleotide) {
     return ["#ff3f00", "#666", "#444", "black"][nucleotideToNumber(nucleotide)];
   };
-
-  initializeDrawData();
 };
