@@ -16,11 +16,13 @@ var ButtonMaker = function(buttonContainerId, options) {
 
     btn.onclick = function(e) {
       e.preventDefault();
-      unhighlightAllButtons();
-      highlightButton(this);
-      clickHandler && clickHandler(
+      var success = clickHandler(
         buttonData.indexOf(buttonDatum)
       );
+      if (success) {
+        unhighlightAllButtons();
+        highlightButton(this);
+      }
     };
 
     return btn;

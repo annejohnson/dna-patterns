@@ -10,7 +10,7 @@ var RaphaelWrapper = function(containerId) {
     }
   };
 
-  this.drawCircle = function(point, radius, colorString, animationTime) {
+  this.drawCircle = function(point, radius, colorString, animationTime, callback) {
     var initialRadius = 0;
     var circle = raphaelObject.circle(point.x, point.y, initialRadius)
                         .attr({
@@ -18,7 +18,7 @@ var RaphaelWrapper = function(containerId) {
                           stroke: colorString
                         });
 
-    circle.animate({ r: radius }, (animationTime || 0), "backOut");
+    circle.animate({ r: radius }, (animationTime || 0), "backOut", callback);
     raphaelSet.push(circle);
     return circle;
   };

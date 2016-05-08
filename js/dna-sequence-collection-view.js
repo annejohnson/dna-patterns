@@ -34,7 +34,12 @@ var DNASequenceCollectionView = function(model, elements) {
   };
 
   var processButtonClick = function(index) {
-    onButtonClick && onButtonClick(index);
+    if (dnaVisual.currentlyRendering()) {
+      return false;
+    } else {
+      onButtonClick(index);
+      return true;
+    }
   };
 
   initializeButtons();
