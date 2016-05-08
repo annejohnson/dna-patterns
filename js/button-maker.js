@@ -1,12 +1,11 @@
 var ButtonMaker = function(buttonContainerId, options) {
   var buttonClass = "button chooser",
       buttonClassActive = "active";
-  var buttonData = options.buttonData,
-      preselectButtonDatum = options.preselectButtonDatum;
+  var buttonData = options.buttonData;
 
   this.makeButtons = function(options) {
     var buttons = buttonData.map(function(buttonDatum) {
-      var highlight = preselectButtonDatum === buttonDatum;
+      var highlight = options.preselectIndex === buttonData.indexOf(buttonDatum);
       initializeButton(buttonDatum, options.clickHandler, highlight);
     });
   };
@@ -18,7 +17,9 @@ var ButtonMaker = function(buttonContainerId, options) {
       e.preventDefault();
       unhighlightAllButtons();
       highlightButton(this);
-      clickHandler && clickHandler(buttonDatum);
+      clickHandler && clickHandler(
+        buttonData.indexOf(buttonDatum)
+      );
     };
 
     return btn;
