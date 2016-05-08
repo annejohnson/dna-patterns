@@ -305,6 +305,13 @@ body {
     color: black;
 }
 
+.species-name {
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 #choicesContainer {
     text-align: center;
     width: 540px;
@@ -317,7 +324,7 @@ body {
       To achieve centering, move container up and to the left by 50% of the
       container's height and width, respectively
     */
-    margin: -128px auto 0 -270px;
+    margin: -149px auto 0 -270px;
 }
 
 @media screen and (max-height: 280px) {

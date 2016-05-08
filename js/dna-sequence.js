@@ -9,8 +9,12 @@ var DNASequence = function(options) {
     return nucleotideAtPosition(idx).toDrawDatum({ colors: colors });
   };
 
-  this.getName = function() {
+  this.getCommonName = function() {
     return commonName;
+  };
+
+  this.getSpeciesName = function() {
+    return speciesName;
   };
 
   this.getId = function() {

@@ -28,9 +28,16 @@ var ButtonMaker = function(buttonContainerId, options) {
     return btn;
   };
 
+  var buttonDatumToHTML = function(buttonDatum) {
+    return buttonDatum.getCommonName() +
+             "<div class=\"species-name\">" +
+               buttonDatum.getSpeciesName() +
+             "</div>";
+  };
+
   var createButtonNode = function(buttonDatum, highlight) {
     var btn = document.createElement("a");
-    btn.textContent = buttonDatum.getName();
+    btn.innerHTML = buttonDatumToHTML(buttonDatum);
     btn.id = buttonDatum.getId();
     highlight ? highlightButton(btn) : unhighlightButton(btn);
     document.getElementById(buttonContainerId).appendChild(btn);
