@@ -22,6 +22,7 @@
   <script src="js/dna-sequence.js"></script>
   <script src="js/dna-visual-container.js"></script>
   <script src="js/dna-visual.js"></script>
+  <script src="js/dna-visual-interface.js"></script>
   <script src="js/button-maker.js"></script>
 
   <script>
@@ -39,25 +40,15 @@
   <div id="choicesContainer"></div>
 
   <script>
-    var birdDatumToSequence = function(birdDatum) {
+    var sequences = birdData.map(function(birdDatum) {
       return new DNASequence(birdDatum);
-    };
-    var sequences = birdData.map(birdDatumToSequence);
-    var preselectSequence = sequences[0];
-
-    var vis = new DNAVisual("birdVis", preselectSequence).render();
-
-    var btnMaker = new ButtonMaker("choicesContainer", {
-      buttonData: sequences,
-      preselectButtonDatum: preselectSequence
     });
 
-    btnMaker.makeButtons({
-      clickHandler: function(sequence) {
-        vis.clear();
-        vis = new DNAVisual("birdVis", sequence).render();
-      }
-    });
+    new DNAVisualInterface({
+      visualContainerId: "birdVis",
+      buttonContainerId: "choicesContainer",
+      sequences: sequences
+    }).start();
   </script>
 </body>
 <html>
