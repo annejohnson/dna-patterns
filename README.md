@@ -6,7 +6,6 @@ Each DNA sequence is from the species' NADH dehydrogenase subunit 2 gene (mitoch
 
 ## TODO
 - Restore circle-remove animation
-- Refactor to be more MVC-structured
 - Get more species
 - Put geography data and species name
 - Try sequential animation rather than all-at-once

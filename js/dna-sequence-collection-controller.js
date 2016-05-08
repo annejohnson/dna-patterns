@@ -1,5 +1,5 @@
 var DNASequenceCollectionController = function(model, view) {
-  view.subscribe('buttonClicked', function(index) {
+  view.onButtonClick(function(index) {
     setSelectedIndex(index);
   });
 

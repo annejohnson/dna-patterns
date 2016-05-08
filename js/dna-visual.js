@@ -1,6 +1,6 @@
 var DNAVisual = function(containerId, dnaSequence) {
-  var container = new DNAVisualContainer(containerId);
-  var drawOptions = new CircleDrawConfig();
+  var container = new RaphaelWrapper(containerId);
+  var drawConfig = new CircleDrawConfig();
 
   this.render = function() {
     container.prepare();
@@ -9,7 +9,7 @@ var DNAVisual = function(containerId, dnaSequence) {
   };
 
   this.clear = function() {
-    container.clear(drawOptions.circleRemoveTime());
+    container.clear(drawConfig.circleRemoveTime());
     return this;
   };
 
@@ -19,14 +19,14 @@ var DNAVisual = function(containerId, dnaSequence) {
 
     while (!screenHasFilled(point)) {
       var datum = dnaSequence.getDrawDatum(circleIdx);
-      var radius = drawOptions.getRadius(datum.value);
+      var radius = drawConfig.getRadius(datum.value);
       var colorString = datum.color;
 
       container.drawCircle(
         point,
         radius,
         colorString,
-        drawOptions.circleDrawTime()
+        drawConfig.circleDrawTime()
       );
 
       updatePoint(point, radius);
@@ -36,18 +36,18 @@ var DNAVisual = function(containerId, dnaSequence) {
   };
 
   var screenHasFilled = function(point) {
-    return point.y > (screen.height + drawOptions.maxDiameter());
+    return point.y > (screen.height + drawConfig.maxDiameter());
   };
 
   var updatePoint = function(point, radius) {
-    var distanceToNextCircleCenter = drawOptions.marginBetweenCircles();
+    var distanceToNextCircleCenter = drawConfig.marginBetweenCircles();
 
     if (rowHasFilled(point)) {
-      distanceToNextCircleCenter += drawOptions.maxDiameter();
+      distanceToNextCircleCenter += drawConfig.maxDiameter();
       point.x = 0;
       point.y = point.y + distanceToNextCircleCenter;
     } else {
-      distanceToNextCircleCenter += radius + drawOptions.maxRadius();
+      distanceToNextCircleCenter += radius + drawConfig.maxRadius();
       point.x = point.x + distanceToNextCircleCenter;
     }
   };

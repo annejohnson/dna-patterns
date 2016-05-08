@@ -1,7 +1,7 @@
 var DNASequenceCollectionView = function(model, elements) {
-  var publisher = new Publisher(),
-      buttonContainerId = elements.buttonContainerId,
+  var buttonContainerId = elements.buttonContainerId,
       patternContainerId = elements.patternContainerId,
+      onButtonClick = null,
       dnaVisual = null;
 
   model.subscribe("selectedIndexUpdated", function() {
@@ -15,17 +15,7 @@ var DNASequenceCollectionView = function(model, elements) {
     dnaVisual = new DNAVisual(patternContainerId, sequence).render();
   };
 
-  this.subscribe = function(eventName, callback) {
-    publisher.subscribe(eventName, callback);
-  };
-
-  var processButtonClick = function(index) {
-    publisher.publish('buttonClicked', index);
-  };
-
   var initializeButtons = function() {
-    document.getElementById(buttonContainerId).textContent = "";
-
     var btnMaker = new ButtonMaker(buttonContainerId, {
       buttonData: model.getSequences()
     });
@@ -34,6 +24,14 @@ var DNASequenceCollectionView = function(model, elements) {
       clickHandler: processButtonClick,
       preselectIndex: model.getSelectedIndex()
     });
+  };
+
+  this.onButtonClick = function(callback) {
+    onButtonClick = callback;
+  };
+
+  var processButtonClick = function(index) {
+    onButtonClick && onButtonClick(index);
   };
 
   initializeButtons();

@@ -4,6 +4,7 @@ var ButtonMaker = function(buttonContainerId, options) {
   var buttonData = options.buttonData;
 
   this.makeButtons = function(options) {
+    document.getElementById(buttonContainerId).textContent = "";
     var buttons = buttonData.map(function(buttonDatum) {
       var highlight = options.preselectIndex === buttonData.indexOf(buttonDatum);
       initializeButton(buttonDatum, options.clickHandler, highlight);

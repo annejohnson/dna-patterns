@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="style.css" />
 
   <script src="external/raphael.js"></script>
+  <script src="js/raphael-wrapper.js"></script>
 
   <script src="js/point.js"></script>
   <script src="js/publisher.js"></script>
@@ -22,7 +23,6 @@
   <script src="js/circle-draw-config.js"></script>
   <script src="js/nucleotide.js"></script>
   <script src="js/dna-sequence.js"></script>
-  <script src="js/dna-visual-container.js"></script>
   <script src="js/dna-visual.js"></script>
   <script src="js/button-maker.js"></script>
 
@@ -56,16 +56,6 @@
       patternContainerId: "birdVis"
     });
     var controller = new DNASequenceCollectionController(model, view);
-
-    // view.processButtonClick(5);
-
-/*
-    new DNAVisualController({
-      visualContainerId: "birdVis",
-      buttonContainerId: "choicesContainer",
-      sequences: sequences
-    }).start();
-*/
   </script>
 </body>
 <html>

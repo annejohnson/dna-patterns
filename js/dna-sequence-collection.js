@@ -1,6 +1,6 @@
 var DNASequenceCollection = function(dnaSequences) {
-  var selectedIndex = 0;
   var publisher = new Publisher();
+  var selectedIndex = 0;
 
   this.getSequences = function() {
     return dnaSequences;
