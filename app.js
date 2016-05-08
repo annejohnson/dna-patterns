@@ -1,179 +1,160 @@
-(function () {
-  var screenWidthBreakpoint = 600,
-      circleDrawTime = 3000,
-      circleRemoveTime = circleDrawTime / 4,
-      redrawTimeout = 200,
-      nucleotides = "ACGT",
-      currBirdName = "pionus";
+var Point = function(options) {
+  this.x = options.x;
+  this.y = options.y;
+};
 
-  var birdVisRaphaelObject;
+var CircleDrawConfig = function(options) {
+  options = options || {};
 
-  window.onload = function() {
-    prepareContainer();
-    initializeButtons();
-    highlightButton(document.getElementById(currBirdName));
-    displayCurrentBirdVis({ animate: true });
+  this.maxRadius = function() {
+    return options.maxRadius || 126;
   };
 
-  window.onresize = function() {
-    prepareContainer();
-    setTimeout(function() {
-      displayCurrentBirdVis({ animate: false });
-    }, redrawTimeout);
+  this.maxDiameter = function() {
+    return this.maxRadius() * 2;
   };
 
-  var prepareContainer = function() {
-    if (!birdVisRaphaelObject) {
-      birdVisRaphaelObject = Raphael("birdVis");
-    }
-    birdVisRaphaelObject.setSize(screen.width, screen.height);
+  this.marginBetweenCircles = function() {
+    return options.marginBetweenCircles || 130;
   };
 
-  var initializeButtons = function() {
-    for (var birdName in birdData) {
-      initializeButton(birdName);
-    }
+  this.radiusAdder = function() {
+    return options.radiusAdder || 4;
   };
 
-  var initializeButton = function(birdName) {
-    var btn = constructButtonNode(birdName);
-    btn.onclick = function(e) {
-      e.preventDefault();
-      unhighlightAllButtons();
-      highlightButton(this);
-      currBirdName = this.id;
-      displayCurrentBirdVis({ animate: true });
+  this.radiusMultiplier = function() {
+    return options.radiusMultiplier || 18;
+  };
+
+  this.circleDrawTime = function() {
+    return options.circleDrawTime || 3000;
+  };
+
+  this.circleRemoveTime = function() {
+    return options.circleRemoveTime || (this.circleDrawTime() / 8);
+  };
+};
+
+var DnaData = function(dnaString) {
+  var nucleotides = "ACGT",
+      drawData;
+
+  var initializeDrawData = function() {
+    drawData = dnaString.split('').map(getNucleotideDrawDatum);
+  };
+
+  this.getDrawDatum = function(idx) {
+    return drawData[idx] || getDefaultDrawDatum();
+  };
+
+  var getNucleotideDrawDatum = function(nucleotide) {
+    return {
+      value: nucleotideToNumber(nucleotide),
+      color: nucleotideToColor(nucleotide)
     };
   };
 
-  var constructButtonNode = function(bird) {
-    var btn = document.createElement("a");
-    btn.textContent = birdData[bird].name;
-    btn.id = bird;
-    btn.className = "button chooser";
-    document.getElementById("choicesContainer").appendChild(btn);
-    return btn;
-  };
-
-  var unhighlightAllButtons = function() {
-    var allButtons = document.getElementsByClassName("active");
-    for (var i = 0; i < allButtons.length; i++)
-      allButtons[i].className = "button chooser";
-  };
-
-  var highlightButton = function(btn) {
-    btn.className = "button chooser active";
+  var getDefaultDrawDatum = function() {
+    return getNucleotideDrawDatum(nucleotides.split('')[0]);
   };
 
   var nucleotideToNumber = function(char) {
     return nucleotides.indexOf(char);
   }
 
-  var nucleotidesToNumbers = function(str) {
-    return str.split('').map(nucleotideToNumber);
-  }
-
-  var largeOrSmallScreen = function() {
-    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-    return width > screenWidthBreakpoint ? "large" : "small";
+  var nucleotideToColor = function(nucleotide) {
+    return ["#ff3f00", "#666", "#444", "black"][nucleotideToNumber(nucleotide)];
   };
 
-  var displayCurrentBirdVis = function(options) {
-    writeVis(
-      nucleotidesToNumbers(birdData[currBirdName].seq),
-      birdData[currBirdName].colors,
-      options['animate']
-    );
+  initializeDrawData();
+};
+
+var DnaVisualContainer = function(containerId) {
+  var raphaelObject;
+
+  this.prepare = function() {
+    raphaelObject = Raphael(containerId);
+    raphaelObject.setSize(screen.width, screen.height);
   };
 
-  var writeVis = function(arrayOfInts, colorStrings, shouldAnimate) {
-    removeAllCircles(shouldAnimate)
-    var currX = 0,
-      currY = 0,
-      i = 0,
-      drawOptions = defaultDrawOptions(),
-      maxDiameter = 2 * drawOptions.maxRadius;
-    while (currY <= screen.height + maxDiameter) {
-      var radius = (arrayOfInts[i] + drawOptions.radiusAdder) * drawOptions.radiusMultiplier;
-      var initialRadius = shouldAnimate ? 0 : radius;
-      var newCircle;
+  this.drawCircle = function(point, radius, colorString, animationTime) {
+    var initialRadius = 0;
+    var circle = raphaelObject.circle(point.x, point.y, initialRadius)
+                        .attr({
+                          fill: colorString,
+                          stroke: colorString
+                        });
 
-      newCircle = birdVisRaphaelObject.circle(
-        currX,
-        currY,
-        initialRadius
-      );
-      newCircle.attr({
-        fill: colorStrings[arrayOfInts[i]],
-        stroke: colorStrings[arrayOfInts[i]]
-      });
-
-      if (shouldAnimate) {
-        newCircle.animate({ r: radius }, circleDrawTime, "elastic");
-      }
-
-      currX += radius + drawOptions.spacer;
-      if (currX > screen.width) {
-        currX = 0;
-        currY += drawOptions.maxRadius + drawOptions.spacer;
-      }
-      i++;
-    }
+    circle.animate({ r: radius }, (animationTime || 0), "elastic");
+    return circle;
   };
 
-  var removeAllCircles = function(shouldAnimate) {
-    if (shouldAnimate) {
-      birdVisRaphaelObject.forEach(function(circ) {
-        circ.animate({ r: 0 }, circleRemoveTime, "linear", function() {
+  this.clear = function(animationTime) {
+    animationTime = animationTime || 0;
+
+    raphaelObject.forEach(function(circ) {
+      circ.animate(
+        { r: 0 },
+        animationTime,
+        "linear",
+        function() {
           circ.remove();
-        });
-      });
-    } else {
-      birdVisRaphaelObject.clear();
-    }
-  };
-
-  var defaultDrawOptions = function() {
-    var drawOptions = {
-          small: {
-            radiusMultiplier: 9,
-            radiusAdder: 4
-          },
-          large: {
-            radiusMultiplier: 18,
-            radiusAdder: 4
-          }
-        };
-    var margin = 4;
-
-    ["small", "large"].map(function(size) {
-      drawOptions[size].maxRadius = ((nucleotides.length - 1) + drawOptions[size].radiusAdder) * drawOptions[size].radiusMultiplier;
-      drawOptions[size].spacer = drawOptions[size].maxRadius + margin;
+        }
+      );
     });
+  };
+};
 
-    return drawOptions[largeOrSmallScreen()];
+var DnaVisual = function(containerId, dnaString) {
+  var container = new DnaVisualContainer(containerId);
+  var drawOptions = new CircleDrawConfig();
+  var dnaData = new DnaData(dnaString);
+
+  this.render = function() {
+    container.prepare();
+    createVisual();
+    return this;
   };
 
-  var birdData = {
-    pionus: {
-      name: "Maximilian Pionus",
-      seq: "ATAACTCCCATTGCAAAACTAATCTCAGCCCTAAGTATCCTGCTAGGAACAACAATAACAATCACAAGTAACCACTGAGCCATAGCTTGGGCAGGACTAGAAATCAACACCCTATCAATCATCCCCATAATCTCAAAATCCCACCACCCACGAGCCGTTGAAGCAGCAACCAAGTACTTCCTAGTACAAGCTGCCGCTTCAACACTAGTACTCTTCTCAAGCACAATCAACGCATGACACACAGGACAATGAGACATCACCCTACTCACCCATCCCCCAGCATGTCTCCTACTAACCACCGCAGTTGCTATTAAGCTGGGCCTAACTCCATTCCACTTTTGATTTCCAGAAGTACTCCAAGGGTCATCCCTCCCCACAGCCCTACTTCTCTCAACAGTAATAAAACTCCCACCAATTACACTCCTACTAATCACATCCCACTCACTAAACCCTGTCCTACTCACTACCATATCCATTATATCCGTCGCCCTTGGCGGCTGAATGGGACTAAACCAAACACAAACCCGAAAAATTATAGCCTTCTCATCCATCTCCCACCTGGGCTGAATAACATCCATTATCACCTACAGCCCAAAACTAACCCTACTAACCTTCTACGCCTACGCCCTAATAACAACCTCCATCTTCCTCACTATAAACACAACCAACACCTTAAAACTATCAACACTAATGACTGCATGAACCAAAACTCCCATACTAAACACAACCCTCATACTAACACTACTATCACTAGCAGGCCTCCCCCCACTAACAGGCTTCCTGCCCAAATGACTCATCATCCAAGAACTCGTCAAGCAAGAAATAACCACAACAGCCACAATCATCTCCATAATATCGCTCCTAGGGTTATTCTTCTACCTACGCCTAGCATACTGCTCCACTATCACACTCCCCCCCAACCCCTCTAGCAAGATAAAACAGTGATCCACTAAAAACCCAACCAACACTCTAGTCTCCACACTCACCTCCCTGTCCATCTCACTCCTCCCACTCTCCCCTATAATCCTCACCACCACTTAA",
-      colors: ["olive", "green", "silver", "purple"]
-    },
-    regent: {
-      name: "Regent Parakeet",
-      seq: "ATGAGTCCCCTTACAAAACTTATTCTAACTACAAGTCTGCTCACAGGGACAACAATCACAATCACAAGCAACCACTGACTAATAGCCTGAACCGGATTAGAAATCAACACCTTAGCCATCATCCCCCTAATCTCAAAATCCCACCACCCACGAGCCATCGAAGCAGCAACCAAATACTTCCTAGTACAAGCAGCAGCCTCCACACTAATACTCTTCTCAAGCACAATAAACGCATGATTTACTGGACAGTGAGACATCACCCAGCTCACCCACCCTCCATCATCCGCTCTACTAACCGCTGCAATCGCTATTAAACTAGGCCTAGCCCCATTCCACTTCTGATTTCCAGAAGCACTCCAAGGGTCATCCCTTACCACGGCCCTCCTTCTCTCAACAGTAATAAAACTCCCACCAACTACCATTCTCCTACTCACATCACACTCACTAAACCCAACACTACTCACCACCATATCCATCATATCCATCGCCCTAGGTGGATGAATAGGACTTAACCAAACACAAACCCGCAAAATCCTAGCCTTCTCCTCCATTTCACACCTAGGCTGAATAACCACCATCATCATCTACAACCCAAAACTAACCCTACTAACCTTCCTCACCTACATCCTAATAACAACCTCTATCTTTCTCACCATAAACACAACCAACACCCTAAAGCTACCAACGCTAATAACCTCCTGAACCAAAACCCCCACCCTAAGCACAACCCTCATACTAACCCTCCTCTCACTAGCGGGTCTCCCCCCACTAACAGGATTTTTACCCAAATGACTCATCATCCAAGAGCTCACTAAACAAGAAATAACCACAACAGCTACAATCATCTCTATATTCTCACTCCTAGGACTATTCTTCTACCTCCGCTTGGCATACTGTTCAACAATCACCCTACCTCCAAACCCCTCAAACAAAATAAAACAATGATCCCCTAAAAAACCAACAAACATCCTAATCTCTACATCTACCTCACTATCCACCTCACTCCTACCACTCTCCCCTATAATTCTCACCACCATTTAA",
-      colors: ["#ff3f00", "#446389", "#41d344", "#5a845a"] // red blue lightgreen olivegreen
-    },
-    yellowCrested: {
-      name: "Yellow-Crested Cockatoo",
-      seq: "GTTCAACTCCCTCCCCTACTAATGAGCCCCCTTACAAAACTCACCCTAACACTCAGCCTAGCCCTAGGAACAACAACCACAATCACAAGCAACCACTGAGTCACAGCCTGAGCTGGATTAGAAATCAACACCTTAGCCATTATTCCATTGATCTCAAAATCTCACCACCCCCGAGCTATCGAAGCAGCAACCAAATATTTCCTAACCCAAGCAACTGCCTCAGCACTAATACTCTTTTCAAGCACAACCAACGCATGGTCTTCCGGACAATGAGACATCACCCAACTCACCAACCCTCCATCATGTCTCCTCCTTACAACTGCAATCGCAATCAAACTAGGCCTCACCCCATTCCACTTTTGATTCCCAGAAGTGCTACAAGGCTCATCCCTCACCACAGCCCTGCTGCTCTCCACAGCAATAAAACTCCCACCAACCGCCATTCTACTCCTCACTTCACACTCACTAAACCCCACGCTACTCTTCACCATAGCCATAATATCTATTGCCTTAGGCGGCTGAATAGGGCTTAATCAAACACAAACCCGAAAGATCCTAGCCTTCTCATCCATCTCACACCTAGGCTGAATAACCATCATCATCACCTACAACCCAAAGCTAACTCTGCTAACCTTCTACCTCTACACCCTAATAACAGCATCCATCTTCCTCTCCATAAACTCAACCAATACCCTAAAACTATCAACACTAATAACCTCATGAACCAAAACCCCCATACTAAATACAACCCTTATACTAACCCTCCTGTCATTAGCAGGCCTCCCCCCACTAACAGGCTTTCTACCCAAATGACTTATCATCCAAGAGCTAACCAAACAGGAAATAGCCACAACAGCCACTATTATCTCTATACTCTCACTCCTGGGGCTATTCTTCTACCTACGCCTAGCGTACTGTTCAACAATCACCCTCCCCCCCAACTCCTCAAACAAAATAAAACAGTGATCCACCAAAAAACCAACTAACCCCCTAATTCCCACACTCACGCTCCTATCCCTGTTACTCCTGCCACTCTCCCCCATAATCCCCACCACCACTTAAGAAACTTAGGATAATATCAAACCAAGG",
-      colors: ["orange", "white", "gray", "#fff200"] // orange white gray yellow
-    },
-    palm: {
-      name: "Black Palm Cockatoo",
-      seq: "GTTGAGCCCCCTCCCCTACTAATGAGCCCCCTCACAAAATTCATCCTAGCACTAAGCCTAACCTCAGGGACAATAATCACAATCACAAGCAACCACTGAGTAATAGCCTGAGCCGGACTAGAAATCAATACCCTAACCATTCTCCCCCTAATCTCAAAATCCCACCACCCCCGAGCCATCGAAGCTACAATCAAATACTTCCTAACACAAGCAACTGCCTCCATACTAATCCTCTTCTCAAGCATAACCAACGCATGGTCCTCCGGACAATGAGACATTACCCAACTCACCAACCCCCTCTCATGCCTTCTACTCACCACCGCAGTTGCTATCAAACTAGGACTAACTCCATTCCACTTCTGATTCCCAGAAGTACTACAAGGCTCATCCCTCTCCACAGCCCTGCTACTCTCGACAGCAATAAAACTCCCACCAACCACCATCCTACTTCTCACATCACACTCACTAAACCCCACATTACTCTCCACCATGGCTATCACATCCATCGCCCTAGGCGGCTGAATAGGACTTAACCAAACACAAACCCGAAAAATCCTAGCTTTTTCATCTATTTCACACCTAGGCTGAATAACCATCATCATCACCTACAACCCAAAACTAACCCTACTAACCTTCTACCTCTATACCCTAATAACAACGTCCATCTTCCTCACTATAAACTCAGCCAACACCCTAAAACTATCAACGCTAATAACCTCATGAACCAAAACCCCTGTACTAAATTCAACCCTCATACTAACCCTTCTATCACTAGCAGGCCTTCCCCCACTAACAGGCTTCCTCCCCAAATGACTCATCATTCAAGAACTCACCAAGCAAGAAATAACCGTAACAGCTACTATCATCTCCATACTCTCACTCCTAGGGCTCTTCTTCTATCTACGCCTAACGTACTGTTCAACAATCACACTCCCCCCCAACCCTTCAAACAAAATAAAACAATGATCCGCTAAAAAACCAATCAACATCTTAATCCCCCCATTCACCCTCCTATCCCTATCACTCCTACCACTCTCCCCCATAATCCTTACAACCACTTAAGAAACTTAGGATAATACCAAACCAAAG",
-      colors: ["#ff3f00", "#666", "#444", "black"] // red gray gray black
+  this.clear = function() {
+    container.clear(drawOptions.circleRemoveTime());
+    return this;
+  };
+
+  var createVisual = function() {
+    var point = new Point({ x: 0, y: 0 }),
+        circleIdx = 0;
+
+    while (!screenHasFilled(point)) {
+      var datum = dnaData.getDrawDatum(circleIdx);
+      var radius = getRadius(datum.value);
+      var colorString = datum.color;
+
+      container.drawCircle(point, radius, colorString, drawOptions.circleDrawTime());
+      updatePoint(point, radius);
+
+      circleIdx++;
     }
   };
-})();
+
+  var screenHasFilled = function(point) {
+    return point.y > (screen.height + drawOptions.maxDiameter());
+  };
+
+  var getRadius = function(dataInt) {
+    return (dataInt + drawOptions.radiusAdder()) * drawOptions.radiusMultiplier();
+  };
+
+  var updatePoint = function(point, radius) {
+    if (rowHasFilled(point)) {
+      point.x = 0;
+      point.y = point.y + drawOptions.maxRadius() + drawOptions.marginBetweenCircles();
+    } else {
+      point.x = point.x + radius + drawOptions.marginBetweenCircles();
+    }
+  };
+
+  var rowHasFilled = function(point) {
+    return point.x > screen.width;
+  };
+};
