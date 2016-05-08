@@ -62,9 +62,9 @@ var CircleDrawConfig = function(options) {
   var largeScreenDefaults = function() {
     return {
       radiusAdder: 4,
-      radiusMultiplier: 18,
-      circleDrawTime: 3000,
-      circleRemoveTime: 375,
+      radiusMultiplier: 11,
+      circleDrawTime: 700,
+      circleRemoveTime: 175,
       marginBetweenCircles: 4
     };
   };
@@ -73,9 +73,9 @@ var CircleDrawConfig = function(options) {
     return {
       radiusAdder: 4,
       radiusMultiplier: 9,
-      circleDrawTime: 3000,
-      circleRemoveTime: 375,
-      marginBetweenCircles: 4
+      circleDrawTime: 700,
+      circleRemoveTime: 175,
+      marginBetweenCircles: 3
     };
   };
 };

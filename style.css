@@ -305,15 +305,26 @@ body {
     color: black;
 }
 
+.species-name {
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 #choicesContainer {
     text-align: center;
-    width: 550px;
+    width: 540px;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin: -122px auto 0 -275px;
     float: none;
     display: block;
+    /*
+      To achieve centering, move container up and to the left by 50% of the
+      container's height and width, respectively
+    */
+    margin: -149px auto 0 -270px;
 }
 
 @media screen and (max-height: 280px) {
@@ -323,7 +334,7 @@ body {
     }
 }
 
-@media screen and (max-width: 560px) {
+@media screen and (max-width: 580px) {
     #choicesContainer {
         width: 100%;
         margin: 40px auto 40px auto;

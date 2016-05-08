@@ -1,55 +1,69 @@
-var DNAVisual = function(containerId, dnaSequence) {
-  var container = new DNAVisualContainer(containerId);
-  var drawOptions = new CircleDrawConfig();
+var DNAVisual = function(containerId) {
+  var container = new RaphaelWrapper(containerId);
+  var drawConfig = new CircleDrawConfig();
+  var currentlyRendering = false;
 
-  this.render = function() {
+  this.render = function(dnaSequence) {
+    currentlyRendering = true;
     container.prepare();
-    createVisual();
+    createVisual(dnaSequence, function() {
+      currentlyRendering = false;
+    });
     return this;
   };
 
-  this.clear = function() {
-    container.clear(drawOptions.circleRemoveTime());
+  this.currentlyRendering = function() {
+    return currentlyRendering;
+  };
+
+  this.clear = function(callback) {
+    var animationTime = drawConfig.circleRemoveTime();
+    container.clear(animationTime, callback);
     return this;
   };
 
-  var createVisual = function() {
+  var createVisual = function(dnaSequence, callback) {
     var point = new Point({ x: 0, y: 0 }),
         circleIdx = 0;
 
     while (!screenHasFilled(point)) {
-      var datum = dnaSequence.getDrawDatum(circleIdx);
-      var radius = drawOptions.getRadius(datum.value);
+      var datum = dnaSequence.getDrawDatum(circleIdx++);
+      var radius = drawConfig.getRadius(datum.value);
       var colorString = datum.color;
 
       container.drawCircle(
         point,
         radius,
         colorString,
-        drawOptions.circleDrawTime()
+        drawConfig.circleDrawTime(),
+        (lastCirclePoint(point, radius) ? callback : null)
       );
 
       updatePoint(point, radius);
-
-      circleIdx++;
     }
   };
 
   var screenHasFilled = function(point) {
-    return point.y > (screen.height + drawOptions.maxDiameter());
+    return point.y > (screen.height + drawConfig.maxDiameter());
   };
 
   var updatePoint = function(point, radius) {
-    var distanceToNextCircleCenter = drawOptions.marginBetweenCircles();
+    var distanceToNextCircleCenter = drawConfig.marginBetweenCircles();
 
     if (rowHasFilled(point)) {
-      distanceToNextCircleCenter += drawOptions.maxDiameter();
+      distanceToNextCircleCenter += drawConfig.maxDiameter();
       point.x = 0;
       point.y = point.y + distanceToNextCircleCenter;
     } else {
-      distanceToNextCircleCenter += radius + drawOptions.maxRadius();
+      distanceToNextCircleCenter += radius + drawConfig.maxRadius();
       point.x = point.x + distanceToNextCircleCenter;
     }
+  };
+
+  var lastCirclePoint = function(point, radius) {
+    var copyOfPoint = new Point({ x: point.x, y: point.y });
+    updatePoint(copyOfPoint, radius);
+    return screenHasFilled(copyOfPoint);
   };
 
   var rowHasFilled = function(point) {

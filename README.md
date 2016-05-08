@@ -5,9 +5,7 @@ This uses homologous DNA sequences across a few parrot species to generate patte
 Each DNA sequence is from the species' NADH dehydrogenase subunit 2 gene (mitochondrial) and is available through the [National Center for Biotechnology Information](http://www.ncbi.nlm.nih.gov).
 
 ## TODO
-- Restore circle-remove animation
-- Refactor to be more MVC-structured
 - Get more species
-- Put geography data and species name
+- Put geography info
 - Try sequential animation rather than all-at-once
 - Add a play button that fireworks through the different species

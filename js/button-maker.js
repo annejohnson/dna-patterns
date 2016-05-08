@@ -1,12 +1,12 @@
 var ButtonMaker = function(buttonContainerId, options) {
   var buttonClass = "button chooser",
       buttonClassActive = "active";
-  var buttonData = options.buttonData,
-      preselectButtonDatum = options.preselectButtonDatum;
+  var buttonData = options.buttonData;
 
   this.makeButtons = function(options) {
+    document.getElementById(buttonContainerId).textContent = "";
     var buttons = buttonData.map(function(buttonDatum) {
-      var highlight = preselectButtonDatum === buttonDatum;
+      var highlight = options.preselectIndex === buttonData.indexOf(buttonDatum);
       initializeButton(buttonDatum, options.clickHandler, highlight);
     });
   };
@@ -16,17 +16,28 @@ var ButtonMaker = function(buttonContainerId, options) {
 
     btn.onclick = function(e) {
       e.preventDefault();
-      unhighlightAllButtons();
-      highlightButton(this);
-      clickHandler && clickHandler(buttonDatum);
+      var success = clickHandler(
+        buttonData.indexOf(buttonDatum)
+      );
+      if (success) {
+        unhighlightAllButtons();
+        highlightButton(this);
+      }
     };
 
     return btn;
   };
 
+  var buttonDatumToHTML = function(buttonDatum) {
+    return buttonDatum.getCommonName() +
+             "<div class=\"species-name\">" +
+               buttonDatum.getSpeciesName() +
+             "</div>";
+  };
+
   var createButtonNode = function(buttonDatum, highlight) {
     var btn = document.createElement("a");
-    btn.textContent = buttonDatum.getTextContent();
+    btn.innerHTML = buttonDatumToHTML(buttonDatum);
     btn.id = buttonDatum.getId();
     highlight ? highlightButton(btn) : unhighlightButton(btn);
     document.getElementById(buttonContainerId).appendChild(btn);
