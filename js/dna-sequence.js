@@ -9,7 +9,7 @@ var DNASequence = function(options) {
     return nucleotideAtPosition(idx).toDrawDatum({ colors: colors });
   };
 
-  this.getTextContent = function() {
+  this.getName = function() {
     return commonName;
   };
 

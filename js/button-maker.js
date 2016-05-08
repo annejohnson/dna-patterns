@@ -26,7 +26,7 @@ var ButtonMaker = function(buttonContainerId, options) {
 
   var createButtonNode = function(buttonDatum, highlight) {
     var btn = document.createElement("a");
-    btn.textContent = buttonDatum.getTextContent();
+    btn.textContent = buttonDatum.getName();
     btn.id = buttonDatum.getId();
     highlight ? highlightButton(btn) : unhighlightButton(btn);
     document.getElementById(buttonContainerId).appendChild(btn);
