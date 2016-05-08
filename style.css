@@ -257,8 +257,8 @@ body {
 }
 
 #birdVis, #birdVis > svg {
-    height: 100% !important;
-    width: 100% !important;
+    min-height: 100% !important;
+    min-width: 100% !important;
     display: block;
 }
 
