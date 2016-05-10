@@ -1,14 +1,15 @@
 var Species = function(options) {
-  var sequence = new DNASequence(options.sequence);
+  var sequence = new DNASequence(options.sequence),
+      colors = options.colors,
+      drawDataGenerator = new DNASequenceDrawDataGenerator(sequence, colors);
 
-  this.getDnaSequence = function() {
-    return sequence;
+  this.getDrawDatum = function(num) {
+    return drawDataGenerator.getDrawDatum(num);
   };
 
   [
     "speciesName",
     "commonName",
-    "colors",
     "id"
   ].map(function(attr) {
     var methodName = "get" + attr[0].toUpperCase() + attr.slice(1);
@@ -16,12 +17,4 @@ var Species = function(options) {
       return options[attr];
     };
   }.bind(this));
-
-  var drawData = this.getDnaSequence().getDrawData(
-    this.getColors()
-  );
-
-  this.getDrawDatum = function(index) {
-    return drawData[index];
-  };
 };
