@@ -1,12 +1,12 @@
-var DNAVisual = function(containerId) {
+var Visual = function(containerId) {
   var container = new RaphaelWrapper(containerId);
   var drawConfig = new CircleDrawConfig();
   var currentlyRendering = false;
 
-  this.render = function(dnaSequence) {
+  this.render = function(drawable) {
     currentlyRendering = true;
     container.prepare();
-    createVisual(dnaSequence, function() {
+    renderVisual(drawable, function() {
       currentlyRendering = false;
     });
     return this;
@@ -22,12 +22,12 @@ var DNAVisual = function(containerId) {
     return this;
   };
 
-  var createVisual = function(dnaSequence, callback) {
+  var renderVisual = function(drawable, callback) {
     var point = new Point({ x: 0, y: 0 }),
         circleIdx = 0;
 
     while (!screenHasFilled(point)) {
-      var datum = dnaSequence.getDrawDatum(circleIdx++);
+      var datum = drawable.getDrawDatum(circleIdx++);
       var radius = drawConfig.getRadius(datum.value);
       var colorString = datum.color;
 

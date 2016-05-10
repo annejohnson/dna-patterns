@@ -1,4 +1,4 @@
-var DNASequenceCollectionController = function(model, view) {
+var SpeciesCollectionController = function(model, view) {
   view.onButtonClick(function(index) {
     setSelectedIndex(index);
   });

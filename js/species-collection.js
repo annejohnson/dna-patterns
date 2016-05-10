@@ -1,17 +1,17 @@
-var DNASequenceCollection = function(dnaSequences) {
+var SpeciesCollection = function(speciesArray) {
   var publisher = new Publisher();
   var selectedIndex = 0;
 
-  this.getSequences = function() {
-    return dnaSequences;
+  this.getSpeciesCollection = function() {
+    return speciesArray;
   };
 
   this.getSelectedIndex = function() {
     return selectedIndex;
   };
 
-  this.getSelectedSequence = function() {
-    return dnaSequences[this.getSelectedIndex()];
+  this.getSelectedSpecies = function() {
+    return this.getSpeciesCollection()[this.getSelectedIndex()];
   };
 
   this.setSelectedIndex = function(idx) {

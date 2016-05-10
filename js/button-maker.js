@@ -1,7 +1,10 @@
 var ButtonMaker = function(buttonContainerId, options) {
   var buttonClass = "button chooser",
       buttonClassActive = "active";
-  var buttonData = options.buttonData;
+  var buttonData = options.buttonData,
+      getButtonDatumHTML = options.htmlFunction || function(obj) {
+        return obj.toString();
+      };
 
   this.makeButtons = function(options) {
     document.getElementById(buttonContainerId).textContent = "";
@@ -28,16 +31,9 @@ var ButtonMaker = function(buttonContainerId, options) {
     return btn;
   };
 
-  var buttonDatumToHTML = function(buttonDatum) {
-    return buttonDatum.getCommonName() +
-             "<div class=\"species-name\">" +
-               buttonDatum.getSpeciesName() +
-             "</div>";
-  };
-
   var createButtonNode = function(buttonDatum, highlight) {
     var btn = document.createElement("a");
-    btn.innerHTML = buttonDatumToHTML(buttonDatum);
+    btn.innerHTML = getButtonDatumHTML(buttonDatum);
     btn.id = buttonDatum.getId();
     highlight ? highlightButton(btn) : unhighlightButton(btn);
     document.getElementById(buttonContainerId).appendChild(btn);

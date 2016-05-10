@@ -1,28 +1,12 @@
-var DNASequence = function(options) {
-  var speciesName = options.speciesName,
-      commonName = options.commonName,
-      sequence = options.sequence,
-      colors = options.colors,
-      id = options.id;
-
-  this.getDrawDatum = function(idx) {
-    return nucleotideAtPosition(idx).toDrawDatum({ colors: colors });
-  };
-
-  this.getCommonName = function() {
-    return commonName;
-  };
-
-  this.getSpeciesName = function() {
-    return speciesName;
-  };
-
-  this.getId = function() {
-    return id;
-  };
-
-  var nucleotideAtPosition = function(idx) {
-    var nucleotideChar = sequence[idx] || nucleotides.split('')[0];
+var DNASequence = function(sequence) {
+  var createNucleotide = function(nucleotideChar) {
     return new Nucleotide(nucleotideChar);
+  };
+  var nucleotides = sequence.split("").map(createNucleotide);
+
+  this.getDrawData = function(colors) {
+    return nucleotides.map(function(nucleotide) {
+      return nucleotide.toDrawDatum(colors);
+    });
   };
 };

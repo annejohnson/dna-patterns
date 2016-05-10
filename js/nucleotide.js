@@ -1,18 +1,18 @@
 var Nucleotide = function(nucleotideChar) {
-  var nucleotides = "ACGT";
+  var nucleotideChars = "ACGT";
 
-  this.toDrawDatum = function(options) {
+  this.toDrawDatum = function(colors) {
     return {
       value: toNumber(),
-      color: toColor(options.colors)
+      color: toColor(colors)
     };
   };
 
   var toNumber = function() {
-    return nucleotides.indexOf(nucleotideChar);
+    return nucleotideChars.indexOf(nucleotideChar);
   };
 
   var toColor = function(colors) {
-    return colors[toNumber()];
+    return colors[toNumber()] || colors[0];
   };
 };

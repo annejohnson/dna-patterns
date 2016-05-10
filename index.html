@@ -16,20 +16,21 @@
   <script src="external/raphael.js"></script>
   <script src="js/raphael-wrapper.js"></script>
 
-  <script src="js/point.js"></script>
   <script src="js/publisher.js"></script>
-  <script src="js/bird-data.js"></script>
-
+  <script src="js/point.js"></script>
   <script src="js/circle-draw-config.js"></script>
-  <script src="js/nucleotide.js"></script>
-  <script src="js/dna-sequence.js"></script>
-  <script src="js/dna-visual.js"></script>
+  <script src="js/visual.js"></script>
   <script src="js/button-maker.js"></script>
 
-  <script src="js/dna-sequence-collection.js"></script>
-  <script src="js/dna-sequence-collection-controller.js"></script>
-  <script src="js/dna-sequence-collection-view.js"></script>
+  <script src="js/nucleotide.js"></script>
+  <script src="js/dna-sequence.js"></script>
+  <script src="js/species.js"></script>
 
+  <script src="js/species-collection.js"></script>
+  <script src="js/species-collection-controller.js"></script>
+  <script src="js/species-collection-view.js"></script>
+
+  <script src="js/bird-data.js"></script>
 
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -46,16 +47,16 @@
   <div id="choicesContainer"></div>
 
   <script>
-    var sequences = birdData.map(function(birdDatum) {
-      return new DNASequence(birdDatum);
+    var speciesCollection = birdData.map(function(birdDatum) {
+      return new Species(birdDatum);
     });
 
-    var model = new DNASequenceCollection(sequences);
-    var view = new DNASequenceCollectionView(model, {
+    var model = new SpeciesCollection(speciesCollection);
+    var view = new SpeciesCollectionView(model, {
       buttonContainerId: "choicesContainer",
       patternContainerId: "birdVis"
     });
-    var controller = new DNASequenceCollectionController(model, view);
+    var controller = new SpeciesCollectionController(model, view);
   </script>
 </body>
 <html>
